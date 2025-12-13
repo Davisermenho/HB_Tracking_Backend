@@ -1,0 +1,24 @@
+# Ignora ambiente virtual Python
+.venv/
+# Ignora arquivos de cache
+__pycache__/
+# Ignora arquivos de variáveis de ambiente
+.env
+# Ignora configurações locais do VS Code
+.vscode/
+# Ignora arquivos de logs
+*.log
+# Ignora arquivos de testes temporários
+*.pytest_cache/
+# Ignora arquivos de banco de dados SQLite
+*.sqlite3
+# Ignora arquivos de backup do editor
+*~
+# Ignora arquivos de compilação Python
+*.pyc
+*.pyo
+*.pyd
+# Ignora diretório de cobertura de testes
+htmlcov/
+# Ignora arquivos/módulos que possam ser usados só localmente
+local_settings.py

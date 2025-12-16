@@ -22,3 +22,5 @@ __pycache__/
 htmlcov/
 # Ignora arquivos/módulos que possam ser usados só localmente
 local_settings.py
+tests/
+

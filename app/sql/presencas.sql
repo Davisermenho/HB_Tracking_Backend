@@ -1,4 +1,3 @@
--- Tabela de presenças
 CREATE TABLE presencas (
     id SERIAL PRIMARY KEY,
     atleta_id INTEGER REFERENCES atletas(id),

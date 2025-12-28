@@ -230,7 +230,7 @@ Atualizações nas Fichas de Staff
   - Não solicitar equipe no cadastro; operação por vínculo definido posteriormente (RF7 para treinador).
 
 Contrato de API — Campos gerenciados pelo servidor (não enviar no POST)
-- id, registered_at, athlete_age, athlete_age_at_registration, category_id (global), athlete_photo_url, is_active, created_at, updated_at.
+- id, registered_at, athlete_age, athlete_age_at_registration,category_id (sazonal, derivada no contexto da temporada; não persistida no perfil global; retornar apenas no GET contextual), athlete_photo_url, is_active, created_at, updated_at.
 - Upload de foto: multipart/form-data via endpoint; resposta retorna a URL derivada (/athletes/{id}/photo).
 
 Notas de conformidade

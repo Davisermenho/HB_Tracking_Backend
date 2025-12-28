@@ -1004,7 +1004,7 @@ Banco novo deve conter: org única, roles, superadmin e uma temporada. Categoria
 
 - Trigger de bloqueio (TRG_games_block_update_finalized):  
   - Bloqueia qualquer UPDATE em jogos com status=finalizado.  
-  - Exceção: permitir UPDATE que altere exclusivamente o status de finalizado -> em_revisao, quando a ação for do Coordenador/Dirigente, com audit_log obrigatório (acao=game_reopen, actor_id, timestamp, old/new).
+  - - Exceção: permitir UPDATE que altere exclusivamente o status de finalizado -> em_revisao, quando a ação for do Coordenador ou do Dirigente, com audit_log obrigatório (acao=game_reopen, actor_id, timestamp, old/new).
 
 - Reabertura (sem snapshot/versão nova, conforme RF15 V1.1):  
   - Operação: set status=em_revisao; registrar audit_log “game_reopen”.  

@@ -3,6 +3,7 @@
 Sumário
 - [1. Regras Estruturais](#1-regras-estruturais)
 - [2. Regras Operacionais - V1 (Consolidadas)](#2-regras-operacionais---v1-consolidadas)
+- [2.X Regras Operacionais - Casos Especiais, UX e Edge Cases](#2x-regras-operacionais---casos-especiais-ux-e-edge-cases)
 - [3. Regras de Domínio Esportivo - Definitivas](#3-regras-de-dominio-esportivo---definitivas)
 - [4. Visibilidade do Perfil Atleta](#4-visibilidade-do-perfil-atleta)
 - [5. Regras de Participação da Atleta - Definitivas](#5-regras-de-participacao-da-atleta---definitivas)
@@ -528,6 +529,69 @@ O sistema possui alertas automáticos para inconsistências de dados e riscos es
 
 RF31. Prioridade entre regras  
 Em qualquer conflito entre regra esportiva e regra operacional, a regra esportiva sempre prevalece automaticamente.
+
+## 2.X Regras Operacionais – Casos Especiais de Transição, UX e Edge Cases
+
+### 2.X.1 Troca de papel sem carência *(Relaciona: R5, R7, R28, R31, R32)*
+- O encerramento de vínculo e o início de um novo vínculo (ex: de Treinador para Coordenador) podem ocorrer imediatamente, sem necessidade de tempo mínimo (“carência”) entre papéis diferentes.
+- O sistema registra ambos os eventos no log de auditoria, cada um com seu timestamp exato. Após a transição, permissões e interface são ajustadas para o novo papel vigente.
+
+### 2.X.2 Controle de presença e ausência em treinos *(Relaciona: R18, RF10, RP5, RP6, RD22)*
+- Ao criar um treino para determinada equipe, o sistema gera automaticamente a lista de atletas vinculadas àquela equipe como “presença a marcar”.
+- Após a realização do treino, o responsável (Dirigente, Coordenador ou Treinador) deve marcar a presença individual de cada atleta.
+- Ausências registradas impactam diretamente as métricas de assiduidade e podem acionar alertas de baixa frequência, informando em relatórios e dashboards.
+- Não existe “convocação formal” para treinos; estar vinculado à equipe garante inclusão automática na lista de presença.
+
+### 2.X.3 Bloqueio operacional por ausência de temporada ativa ("Seed") *(Relaciona: RDB14, Seção "Exceções e falhas", RF4)*
+- Se não houver nenhuma temporada ativa ou planejada, todos os fluxos de cadastro de usuários, equipes ou staff ficam bloqueados para todos os usuários, exceto Dirigente/Admin.
+- Para Dirigentes/Admin, o sistema oferece acesso direto à criação da temporada inicial seed.
+- Todos os outros usuários recebem notificação clara sobre a impossibilidade de operar até que uma nova temporada seja criada.
+
+### 2.X.4 Vínculo histórico correto em estatísticas após múltiplas trocas *(Relaciona: R11, R12, R17, RD87, RP20)*
+- Todas as estatísticas e eventos de participação são sempre vinculadas à equipe vigente do atleta no momento da ocorrência do evento.
+- Mudanças de equipe (team_registration) geram um novo vínculo — sem sobreposição de períodos — e consultas históricas sempre exibem o vínculo/equipe correspondente à data do evento, mesmo diante de múltiplas transferências no mesmo dia.
+
+### 2.X.5 Liberação ou impedimento médico sob responsabilidade especializada *(Relaciona: RP17, RD16, Seção 4 item 3 "Dados médicos e sensíveis (LGPD)")*
+- O status de impedimento para treinamentos ou jogos, quando houver restrição médica, é controlado exclusivamente por um usuário médico, devidamente designado no sistema.
+- O sistema apenas exibe o alerta de restrição; a liberação para atividades só pode ocorrer mediante ação auditada do profissional de saúde.
+
+### 2.X.6 Bloqueios para erro de posição de goleira *(Relaciona: RD13, 4.1 Atleta ficha, Validação na UI/Backend)*
+- No cadastro e edição de atletas, se a posição defensiva principal for “goleira”, todos os campos ofensivos devem ser ocultados ou desabilitados na interface de usuário e na API.
+- O backend rejeita tentativas de atribuição de posição ofensiva à goleira, retornando erro informativo.
+- Ao tentar alterar uma jogadora de goleira para linha ou vice-versa, o sistema alerta que a alteração pode impactar estatísticas e permissões e exige confirmação explícita do usuário responsável.
+
+### 2.X.7 Rascunhos não auditáveis *(Relaciona: RF18, RF22, Seção Rascunhos)*
+- Registros salvos como rascunho (ex: drafts de jogos, treinos, fichas) não são auditados ou versionados no log de auditoria.
+- Rascunhos podem ser salvos e descartados a qualquer tempo sem trilha de rastreabilidade.
+- Apenas ações efetivas publicadas no sistema são auditadas.
+
+### 2.X.8 Descontinuação de categorias/posições (Tabelas auxiliares) *(Relaciona: RDB2.1, RDB4.1, Seção "Categorias/roles não removíveis")*
+- Categorias e posições utilizam tabelas auxiliares (“lookups”) que não podem ser fisicamente excluídas, mas apenas inativadas/descontinuadas.
+- Novos registros não podem usar categorias ou posições inativas. Dados históricos continuam vinculados a essas referências para consultas e relatórios.
+
+### 2.X.9 Notificação crítica bloqueante (hard-block) *(Relaciona: RF24, RF19, R31, R32)*
+- Notificações críticas (ex: pendência disciplinar, inconsistência de dados) geram sobresposição visual (modal hard-block) na interface, bloqueando a continuidade de ações relacionadas até que o usuário confirme ciência.
+- Enquanto não houver confirmação, o sistema bloqueia toda interação sobre o contexto afetado.
+
+### 2.X.10 Permissões isoladas por vínculo em promoções/demissões rápidas *(Relaciona: R25, R26, R9, R28, R42)*
+- Cada mudança de vínculo (início ou encerramento) é registrada de modo independente e auditável.
+- O usuário só tem permissões conforme o vínculo ativo em vigor naquele momento; ao ficar sem vínculo operacional, acessa o sistema apenas em modo leitura restrito.
+- O histórico completo de permissões e acessos é rastreável por meio dos logs de vínculos.
+
+### 2.X.11 Janela curta de edição/desfazer *(Relaciona: R40, RF27, Seção Rascunhos)*
+- Após criar um registro (exemplo: presença, estatística, treino), o usuário possui até 10 minutos para editar ou desfazer a operação de forma autônoma.
+- Após esse prazo, apenas níveis superiores podem editar ou o registro deverá ser excluído e refeito.
+- Essa janela visa agilizar correções rápidas de erros e evitar excesso de versões e auditoria para pequenas alterações.
+
+### 2.X.12 Dados derivados e operação offline *(Relaciona: RF25, RD1, RD2, Campos derivados nas APIs)*
+- Dados derivados (como idade, categoria) são recalculados apenas na virada de temporada ou ao sincronizar com o backend.
+- Caso haja operação offline, esses dados só serão atualizados após restabelecimento da conexão, momento em que o sistema aplica recalculo automático e exibe aviso ao usuário.
+- Riscos de inconsistência só existem se o sistema permanecer offline por períodos atípicos (ex: mais de um ano).
+
+### 2.X.13 Seed mínimo, disaster recovery e restauração do sistema *(Relaciona: RDB14, Seção "Exceções e falhas controladas")*
+- Em caso de ausência, corrupção ou inconsistência grave das entidades mínimas do banco (temporada, roles, superadmin, equipe institucional), apenas admin/superadmin pode acessar área especial de "Recuperação do Sistema".
+- O painel de recuperação oferece um comando para restaurar o seed mínimo obrigatório, com registro obrigatório desta ação no log de auditoria.
+- Enquanto não houver restauração, usuários comuns são bloqueados e informados sobre a necessidade de intervenção administrativa.
 
 ## 3. Regras de Domínio Esportivo — Definitivas
 

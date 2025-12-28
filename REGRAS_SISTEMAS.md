@@ -406,7 +406,7 @@ R35. Imutabilidade dos logs
 Logs de auditoria são absolutamente imutáveis, não podendo ser alterados ou removidos, nem pelo Super Administrador.
 
 R36. Autoridade de correção de estatísticas  
-Correções de estatísticas podem ser realizadas por qualquer papel durante temporada ativa, obedecendo R23 e R24. Após encerramento da temporada, apenas Coordenador e Dirigente, via ação administrativa auditada.
+Correções de estatísticas podem ser realizadas por Coordenador, Treinador e Dirigente durante temporada ativa; após encerrada, apenas Coordenador e Dirigente, via ação administrativa auditada.
 
 R37. Edição após encerramento da temporada  
 Após o encerramento da temporada, qualquer edição de dados operacionais ou esportivos só pode ocorrer por ação administrativa auditada, sem reabertura temporal.
@@ -967,7 +967,7 @@ RDB12. Correções de estatística
 Correções exigem admin_note obrigatório e geram log em audit_logs com old/new, sem versionamento completo.
 
 RDB13. Imutabilidade de jogos e treinos  
-Trigger bloqueia UPDATE em jogo finalizado. Reabertura é auditada. Treinos com mais de 24h exigem admin_note para edição.
+Trigger bloqueia UPDATE em jogo finalizado. Após 24h, só é possível editar por ação administrativa auditada com admin_note obrigatório. Treinos com mais de 24h exigem admin_note para edição.
 
 RDB14. Seed mínimo  
 Banco novo deve conter: org única, roles, superadmin e uma temporada. Categorias e equipe são opcionais.
